@@ -8,6 +8,9 @@ class HousesService {
     const pageNumber = parseInt(houseQuery.page) || 1;
     delete houseQuery.page;
 
+    const sortBy = houseQuery.sort;
+    delete houseQuery.sort;
+
     const housesLimit = 10;
     const skipAmount = (pageNumber - 1) * housesLimit;
 
@@ -20,6 +23,7 @@ class HousesService {
 
     const houses = await dbContext.Houses
     .find(houseQuery)
+    .sort(sortBy)
     .skip(skipAmount)
     .limit(housesLimit)
     .populate('creator', 'name picture');
@@ -33,6 +37,11 @@ class HousesService {
       houses: houses
     }
     return pageRes;
+  }
+
+  async postHouse(houseData) {
+    const house = await dbContext.Houses.create(houseData);
+    return house;
   }
 
 }
